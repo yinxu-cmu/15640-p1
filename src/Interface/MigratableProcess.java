@@ -15,8 +15,7 @@ public interface MigratableProcess extends Runnable, Serializable {
 	void suspend();
 	
 	/**
-	 * toString()
-	 * Should return the class name concatenated with with all of the arguments
+	 * toString() return the class name concatenated with with all of the arguments
 	 * that were passed to it when it was constructed.
 	 * 
 	 * @return The class name of the process and all of its original arguments.
