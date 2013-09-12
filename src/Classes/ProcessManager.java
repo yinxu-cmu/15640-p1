@@ -12,8 +12,10 @@ public class ProcessManager {
 	/**
 	 * @param args
 	 * @throws IOException 
+	 * @throws InterruptedException 
+	 * @throws ClassNotFoundException 
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
 		// start master server
 		if (args.length == 0) {
 			MasterServer ms = new MasterServer();
@@ -23,7 +25,7 @@ public class ProcessManager {
 				System.err.println("Master Serivce Ended with Exception");
 			}
 			System.out.println("Master Serivce Ended");
-//			System.exit(0);
+			System.exit(0);
 		} 
 		
 		// start slave server

@@ -12,6 +12,8 @@ public class TestMigratableProcess implements MigratableProcess{
 	private String outputFile = "out.txt";
 	private volatile boolean suspending = false;
 	
+	private int i = 0;
+	
 	public TestMigratableProcess() {
 		
 	}
@@ -27,6 +29,7 @@ public class TestMigratableProcess implements MigratableProcess{
 	
 	public void run() {
 		System.out.println("running process migratable test");
+		suspending = false;
 		DataOutputStream out = null;
 	    try {
 			 out = new DataOutputStream(new FileOutputStream(outputFile));
@@ -35,15 +38,14 @@ public class TestMigratableProcess implements MigratableProcess{
 			e1.printStackTrace();
 		}
 	    
-		int i = 0;
 		while(!suspending) {
 			
-//			try {
-//				out.writeBytes("" + ++i + "\n");
-//			} catch (IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
+			try {
+				out.writeBytes("" + ++i + "\n");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.out.println(++i);
 			
 			try {
