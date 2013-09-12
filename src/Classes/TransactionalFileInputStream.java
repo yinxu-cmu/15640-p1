@@ -4,10 +4,9 @@
 package Classes;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.io.StringReader;
 
@@ -18,7 +17,7 @@ import java.io.StringReader;
  * 3. perform the operation
  * 4. close the file.
  * 
- * @author yinxu
+ * @author Yin Xu
  *
  */
 public class TransactionalFileInputStream extends InputStream implements Serializable{
@@ -30,7 +29,7 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	private String fileName;
 	private long counter;
 	/* cache the connection? */
-	private FileInputStream fis;
+	private RandomAccessFile fileStream;
 	
 	/**
 	 * constructor
@@ -39,19 +38,62 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	
 	public TransactionalFileInputStream(String fileName){
 		this.fileName = fileName;
-		this.counter = 0L;
+		counter = 0L;
 	}
 	
 	/**
-	 * read the file from specified position.
+	 * read a byte the file from specified position.
 	 */
 	@Override
 	public int read() throws IOException {
-		fis = new FileInputStream(fileName);
-		fis.skip(counter);
-		int retByte = fis.read();
+		fileStream = new RandomAccessFile(fileName, "rws");
+		fileStream.seek(counter);
+		int retByte = fileStream.read();
+		if (retByte != -1) {
+			counter++;
+		}
+		fileStream.close();
+
 		return retByte;
 	}
+	
+	/**
+	 * Reads up to b.length bytes of data from the input stream
+	 * @throws IOException 
+	 */
+	@Override
+	public int read(byte[] b) throws IOException {
+		fileStream = new RandomAccessFile(fileName, "rws");
+		fileStream.seek(counter);
+		int numRead = fileStream.read(b);
+		if (numRead != -1) {
+			counter += numRead;
+		}
+		fileStream.close();
+		
+		return numRead;
+		
+	}
+	
+	/**
+	 * Reads up to len bytes of data from the input stream
+	 * starting from the offset.
+	 * @throws IOException 
+	 */
+	@Override
+	public int read(byte[] b, int off, int len) throws IOException {
+		fileStream = new RandomAccessFile(fileName, "rws");
+		fileStream.seek(counter++);
+		int numRead = fileStream.read(b, off, len);
+		if (numRead != -1) {
+			counter += numRead;
+		}
+		fileStream.close();
+		
+		return numRead;
+		
+	}
+	
 	
 	public static void main(String[] args) throws IOException{
 		
@@ -60,10 +102,10 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 		BufferedReader br = new BufferedReader(reader);
 		
 		try {
-			br.mark(0);
-			System.out.println(br.readLine());
 			System.out.println(br.readLine());
 			
+			br.mark(0);
+			System.out.println(br.readLine());
 			br.reset();
 			System.out.println(br.readLine());
 		} catch (IOException e) {
@@ -77,7 +119,5 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 		}
 		
 	}
-
-	
 	
 }
