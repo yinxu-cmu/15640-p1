@@ -12,6 +12,10 @@ public class TestMigratableProcess implements MigratableProcess{
 	private String outputFile = "out.txt";
 	private volatile boolean suspending = false;
 	
+	/* transactionalIO */
+	private TransactionalFileInputStream inStream;
+	private TransactionalFileOutputStream outStream;
+	
 	private int i = 0;
 	
 	public TestMigratableProcess() {
@@ -21,6 +25,9 @@ public class TestMigratableProcess implements MigratableProcess{
 	public TestMigratableProcess(String[] args) {
 		this.inputFile = args[0];
 		this.outputFile = args[1];
+		
+		inStream = new TransactionalFileInputStream(inputFile);
+		outStream = new TransactionalFileOutputStream(outputFile);
 	}
 	
 	public String toString() {
@@ -31,12 +38,7 @@ public class TestMigratableProcess implements MigratableProcess{
 		System.out.println("running process migratable test");
 		suspending = false;
 		DataOutputStream out = null;
-	    try {
-			 out = new DataOutputStream(new FileOutputStream(outputFile));
-	    } catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+	    out = new DataOutputStream(outStream);
 	    
 		while(!suspending) {
 			
