@@ -1,7 +1,7 @@
 /**
  * 
  */
-package Classes;
+//package Classes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,12 +29,12 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	private String fileName;
 	private long counter;
 	/* cache the connection? */
-	private RandomAccessFile fileStream;
+	//private RandomAccessFile fileStream;
 	
 	/**
 	 * constructor
 	 */
-	public TransactionalFileInputStream(){}
+	//public TransactionalFileInputStream(){}
 	
 	public TransactionalFileInputStream(String fileName){
 		this.fileName = fileName;
@@ -46,7 +46,7 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	 */
 	@Override
 	public int read() throws IOException {
-		fileStream = new RandomAccessFile(fileName, "rws");
+		RandomAccessFile fileStream = new RandomAccessFile(fileName, "rws");
 		fileStream.seek(counter);
 		int retByte = fileStream.read();
 		if (retByte != -1) {
@@ -63,7 +63,7 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	 */
 	@Override
 	public int read(byte[] b) throws IOException {
-		fileStream = new RandomAccessFile(fileName, "rws");
+		RandomAccessFile fileStream = new RandomAccessFile(fileName, "rws");
 		fileStream.seek(counter);
 		int numRead = fileStream.read(b);
 		if (numRead != -1) {
@@ -82,8 +82,8 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	 */
 	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
-		fileStream = new RandomAccessFile(fileName, "rws");
-		fileStream.seek(counter++);
+		RandomAccessFile fileStream = new RandomAccessFile(fileName, "rws");
+		fileStream.seek(counter);
 		int numRead = fileStream.read(b, off, len);
 		if (numRead != -1) {
 			counter += numRead;
@@ -94,7 +94,7 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 		
 	}
 	
-	
+	/*
 	public static void main(String[] args) throws IOException{
 		
 		String s = "ABCD\n1234\nabcd";
@@ -119,5 +119,5 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 		}
 		
 	}
-	
+	*/
 }
