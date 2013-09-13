@@ -93,31 +93,5 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 		return numRead;
 		
 	}
-	
-	/*
-	public static void main(String[] args) throws IOException{
-		
-		String s = "ABCD\n1234\nabcd";
-		StringReader reader = new StringReader(s);
-		BufferedReader br = new BufferedReader(reader);
-		
-		try {
-			System.out.println(br.readLine());
-			
-			br.mark(0);
-			System.out.println(br.readLine());
-			br.reset();
-			System.out.println(br.readLine());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			if (reader != null)
-				reader.close();
-			if (br != null)
-				br.close();
-		}
-		
-	}
-	*/
+
 }

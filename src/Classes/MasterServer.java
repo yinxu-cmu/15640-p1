@@ -39,7 +39,7 @@ public class MasterServer {
 			else if (args[0].equals("hosts"))
 				this.printSlaveList();
 			
-			// syntax should be "start hostID someProcess inputFile outputFile"
+			// syntax should be "start slavehostID someProcess inputFile outputFile"
 			else if (args[0].equals("start") && args.length > 1) {
 				int hostID = -1;
 				try {
