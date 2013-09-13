@@ -20,7 +20,7 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
 	private static final long serialVersionUID = -7158829490078158413L;
 	private String fileName;
 	private long counter;
-	private RandomAccessFile fileStream;
+	//private RandomAccessFile fileStream;
 
 	/**
 	 * constructor.
@@ -36,7 +36,7 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
 	 */
 	@Override
 	public void write(int b) throws IOException {
-		fileStream = new RandomAccessFile(fileName, "rws");
+		RandomAccessFile fileStream = new RandomAccessFile(fileName, "rws");
 		fileStream.seek(counter++);
 		fileStream.write(b);
 		fileStream.close();
@@ -48,7 +48,7 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
 	 */
 	@Override
 	public void write(byte[] b) throws IOException {
-		fileStream = new RandomAccessFile(fileName, "rws");
+		RandomAccessFile fileStream = new RandomAccessFile(fileName, "rws");
 		fileStream.seek(counter);
 		fileStream.write(b);
 		counter += b.length;
@@ -61,7 +61,7 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
 	 */
 	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
-		fileStream = new RandomAccessFile(fileName, "rws");
+		RandomAccessFile fileStream = new RandomAccessFile(fileName, "rws");
 		fileStream.seek(counter);
 		fileStream.write(b, off, len);
 		counter += len;
