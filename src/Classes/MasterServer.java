@@ -57,19 +57,41 @@ public class MasterServer {
 					System.err.println("Wrong slave host ID");
 			}
 			
-			// syntax should be "migrate hostSRC hostDES someProcessID"
+			// syntax should be "migrate someProcessID hostSRC hostDES"
 			else if (args[0].equals("migrate") && args.length > 1) {
-				// this is hard coding
-				SlaveInfo slaveSrc = this.slaveList.get(0);
-				SlaveInfo slaveDes = this.slaveList.get(1);
 				
-				slaveSrc.out.write("suspend\n");
+				SlaveInfo slaveSrc = null;
+				SlaveInfo slaveDes = null;
+				
+				try {
+					slaveSrc = this.slaveList.get(Integer.parseInt(args[2]));
+					slaveDes = this.slaveList.get(Integer.parseInt(args[3]));
+				} catch (NumberFormatException e) {
+					System.err.println("wrong slave ID format");
+					continue;
+				}
+				
+				if (slaveSrc == null || slaveDes == null) {
+					System.err.println("wrong slave ID");
+					continue;
+				}
+				
+				slaveSrc.out.write("suspend " + args[1] + " " + args[2] + " " + args[3] + "\n");
 				slaveSrc.out.flush();
 				
-				Thread.sleep(1500);
+				try {
+					String slavereply = slaveSrc.in.readLine();
+					if (slavereply.equals("finish suspending")) {
+						slaveDes.out.write("resume " + args[1] + " " + args[2] + " " + args[3] + "\n");
+						slaveDes.out.flush();
+					} else {
+						System.err.println("slave replied" + slavereply);
+						System.err.println("dumping object or acknowledge back error");
+					}
+				} catch (java.net.SocketTimeoutException e) {
+					System.err.println("dumping object or acknowledge back timeout");
+				}
 				
-				slaveDes.out.write("resume\n");
-				slaveDes.out.flush();
 			}
 				
 		}
@@ -100,6 +122,7 @@ public class MasterServer {
 			while (true) {
 				try {
 					Socket socketServing = socketListener.accept();
+					socketServing.setSoTimeout(5 * 1000);
 					BufferedReader in = new BufferedReader(new InputStreamReader(socketServing.getInputStream()));
 					PrintWriter out = new PrintWriter(new OutputStreamWriter(socketServing.getOutputStream()));
 					
@@ -111,16 +134,13 @@ public class MasterServer {
 					slaveList.add(slaveInfo);
 					
 					System.out.println("Socket accepted from " + socketServing.getInetAddress() + " " + socketServing.getPort());
-//					out.write("TestMigratableProcess in.txt out.txt\n");
-//					out.flush();
-					
 				} catch (IOException e) {
 					System.err.println("Fail to accept slave server request.");
 				}
 			}
 		}
 		
-		// do we really need this to listem from slave servers
+		// do we really need this to listen from slave servers
 		private class ServingService extends Thread {
 			
 			public void run() {
