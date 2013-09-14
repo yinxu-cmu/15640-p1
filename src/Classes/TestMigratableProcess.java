@@ -36,7 +36,6 @@ public class TestMigratableProcess implements MigratableProcess{
 	}
 	
 	public void run() {
-		System.out.println("running process migratable test");
 		suspending = false;
 		DataOutputStream out = null;
 	    out = new DataOutputStream(outStream);
@@ -45,7 +44,6 @@ public class TestMigratableProcess implements MigratableProcess{
 			
 			if (i > 100) {
 				finished = true;
-				System.out.println("process finished");
 				break;
 			}
 			
@@ -72,6 +70,10 @@ public class TestMigratableProcess implements MigratableProcess{
 	public void suspend() {
 		suspending = true;
 		while (suspending && !finished);
+	}
+	
+	public boolean getFinished() {
+		return this.finished;
 	}
 
 }

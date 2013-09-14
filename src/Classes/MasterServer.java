@@ -36,8 +36,12 @@ public class MasterServer {
 				continue;
 			else if (args[0].equals("quit"))
 				System.exit(1);
+			else if (args[0].equals("help"))
+				System.out.println(helpMessage);
 			else if (args[0].equals("hosts"))
 				this.printSlaveList();
+			else if (args[0].equals("process"))
+				this.printProcessList();
 			
 			// syntax should be "start slavehostID someProcess inputFile outputFile"
 			else if (args[0].equals("start") && args.length > 1) {
@@ -80,12 +84,12 @@ public class MasterServer {
 				slaveSrc.out.flush();
 				
 				try {
-					String slavereply = slaveSrc.in.readLine();
-					if (slavereply.equals("finish suspending")) {
+					String slaveReply = slaveSrc.in.readLine();
+					if (slaveReply.equals("finish suspending")) {
 						slaveDes.out.write("resume " + args[1] + " " + args[2] + " " + args[3] + "\n");
 						slaveDes.out.flush();
 					} else {
-						System.err.println("slave replied" + slavereply);
+						System.err.println("slave replied" + slaveReply);
 						System.err.println("dumping object or acknowledge back error");
 					}
 				} catch (java.net.SocketTimeoutException e) {
@@ -99,11 +103,48 @@ public class MasterServer {
 
 	
 	private ArrayList<SlaveInfo> slaveList = new ArrayList<SlaveInfo>();
+	private String helpMessage = "usage:\n" +
+									"\thelp: print this message\n" +
+									"\thosts: print slave hosts list\n" + 
+									"\tprocess: print process list on every slave hsot\n" +
+									"\tstart <slavehostID> <someProcessName> <inputFile> <outputFile>\n" +
+									"\tmigrate <someProcessID> <hostSRC> <hostDES>\n";
 
 	private void printSlaveList() {
-		int listSize = this.slaveList.size();
-		for (int i = 0; i < listSize; ++i)
-			System.out.println("#" + i + this.slaveList.get(i).toString());
+		synchronized(slaveList) {
+			int numSlaves = this.slaveList.size();
+			for (int i = 0; i < numSlaves; ++i)
+				System.out.println("#" + i + this.slaveList.get(i).toString());
+		}
+	}
+	
+	private void printProcessList() throws IOException {
+		synchronized(slaveList) {
+			int numSlaves = this.slaveList.size();
+			for (int i = 0; i < numSlaves; ++i) {
+				System.out.println("#" + i + this.slaveList.get(i).toString());
+
+				// tell the slave to send back its process list
+				PrintWriter out = this.slaveList.get(i).out;
+				out.write("processlist\n");
+				out.flush();
+				
+				// read from slave and print out the process list
+				BufferedReader in = this.slaveList.get(i).in;
+				String slaveReply = null;
+//				try {
+					while ((slaveReply = in.readLine()) != null) {
+						if (slaveReply.equals("process list finish"))
+							break;
+						System.out.println("\t" + slaveReply);
+					}
+//				} catch (java.net.SocketTimeoutException e) {
+//					System.err.println("process list acknowledge back timeout");
+//				}
+				
+				
+			}
+		}
 	}
 	
 	private class ListenerService extends Thread {
@@ -131,7 +172,9 @@ public class MasterServer {
 					slaveInfo.port = socketServing.getPort();
 					slaveInfo.in = in;
 					slaveInfo.out = out;
-					slaveList.add(slaveInfo);
+					synchronized(slaveList) {
+						slaveList.add(slaveInfo);
+					}
 					
 					System.out.println("Socket accepted from " + socketServing.getInetAddress() + " " + socketServing.getPort());
 				} catch (IOException e) {

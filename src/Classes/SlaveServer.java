@@ -16,6 +16,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Exceptions.SlaveServiceException;
 
@@ -28,11 +31,12 @@ public class SlaveServer {
 		
 	}
 	
-	public void startService() throws SlaveServiceException, UnknownHostException, IOException, ClassNotFoundException {
+	public void startService(String masterHostName) throws SlaveServiceException, UnknownHostException, IOException, ClassNotFoundException {
 		System.out.println("Slave Service Started");
 		
 		// get connection to master server
-		Socket socket = new Socket(InetAddress.getByName("bambooshark.ics.cs.cmu.edu"), ProcessManager.MASTER_PORT);
+		System.out.println(masterHostName);
+		Socket socket = new Socket(InetAddress.getByName(masterHostName), ProcessManager.MASTER_PORT);
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 		
@@ -45,7 +49,6 @@ public class SlaveServer {
 			if (args[0].equals("start"))
 				this.startNewProcess(args);
 			else if (args[0].equals("suspend")) {
-				System.out.println(str);
 				
 				int migrateProcessID = -1;
 				try {
@@ -63,6 +66,7 @@ public class SlaveServer {
 				}
 				
 				mpWrite.suspend();
+				this.processMap.get(migrateProcessID).status = ProcessStatus.SUSPENDING;
 				FileOutputStream outputFile = new FileOutputStream(args[1] + args[2] + args[3] + ".obj");
 				ObjectOutputStream outputObj = new ObjectOutputStream(outputFile);
 				outputObj.writeObject(mpWrite);
@@ -73,6 +77,9 @@ public class SlaveServer {
 				// acknowledge back to master server
 				out.write("finish suspending\n");
 				out.flush();
+				
+				// remove the process from process list
+				this.processMap.remove(migrateProcessID);
 			} 
 			
 			else if (args[0].equals("resume")) {
@@ -83,6 +90,26 @@ public class SlaveServer {
 				inputFile.close();
 				Thread newThread = new Thread(mpRead);
 				newThread.start();
+				
+				// add this newly started process to the process list
+				ProcessInfo processInfo = new ProcessInfo();
+				processInfo.process = mpRead;
+				processInfo.status = ProcessStatus.RUNNING;
+				processID++;
+				this.processMap.put(processID, processInfo);
+			}
+			
+			else if (str.equals("processlist")) {
+				for (Map.Entry<Integer, ProcessInfo> entry : processMap.entrySet()) {
+					if (entry.getValue().process.getFinished())
+						out.write("#" + entry.getKey() + entry.getValue().getClass().getName() + " " + ProcessStatus.TERMINATED + "\n");
+					else
+						out.write("#" + entry.getKey() + entry.getValue().getClass().getName() + " " + entry.getValue().status + "\n");
+					out.flush();
+				}
+				
+				out.write("process list finish\n");
+				out.flush();
 			}
 			
 		}
@@ -131,6 +158,5 @@ public class SlaveServer {
 		processID++;
 		this.processMap.put(processID, processInfo);
 	}
-	
 
 }
