@@ -120,18 +120,18 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 //
 //	}
 //
-//	/**
-//	 * @return the migrated
-//	 */
-//	public boolean getMigrated() {
-//		return migrated;
-//	}
-//
-//	/**
-//	 * @param migrated the migrated to set
-//	 */
-//	public void setMigrated(boolean migrated) {
-//		this.migrated = migrated;
-//	}
+	/**
+	 * @return the migrated
+	 */
+	public boolean getMigrated() {
+		return migrated;
+	}
+
+	/**
+	 * @param migrated the migrated to set
+	 */
+	public void setMigrated(boolean migrated) {
+		this.migrated = migrated;
+	}
 
 }

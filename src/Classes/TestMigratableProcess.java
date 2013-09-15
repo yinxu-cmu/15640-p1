@@ -11,6 +11,7 @@ public class TestMigratableProcess implements MigratableProcess{
 	private String inputFile;
 	private String outputFile = "out.txt";
 	private volatile boolean suspending = false;
+	private boolean finished = false;
 	
 	/* transactionalIO */
 	private TransactionalFileInputStream inStream;
@@ -35,12 +36,16 @@ public class TestMigratableProcess implements MigratableProcess{
 	}
 	
 	public void run() {
-		System.out.println("running process migratable test");
 		suspending = false;
 		DataOutputStream out = null;
 	    out = new DataOutputStream(outStream);
 	    
-		while(!suspending) {
+		while(!suspending && !finished) {
+			
+			if (i > 100) {
+				finished = true;
+				break;
+			}
 			
 			try {
 				out.writeBytes("" + ++i + "\n");
@@ -51,17 +56,25 @@ public class TestMigratableProcess implements MigratableProcess{
 			System.out.println(++i);
 			
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(600);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
+		
+		suspending = false;
+		inStream.setMigrated(true);
+		
 	}
 	
 	public void suspend() {
 		suspending = true;
+		while (suspending && !finished);
+	}
+	
+	public boolean getFinished() {
+		return this.finished;
 	}
 
 }

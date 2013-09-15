@@ -32,7 +32,7 @@ public class ProcessManager {
 		else if (args.length == 2 && args[0].equals("-c")) {
 			SlaveServer ss = new SlaveServer();
 			try {
-				ss.startService();
+				ss.startService(args[1]);
 			} catch (SlaveServiceException e) {
 				System.err.println("Slave Serivce Ended with Exception");
 			}
@@ -40,7 +40,7 @@ public class ProcessManager {
 		}
 		
 		else {
-			System.out.println("Usage: java ProcessManager [-c <master hostname>]");
+			System.out.println("Usage: java ProcessManager [-c <master hostname or ip>]");
 		}
 	}
 
