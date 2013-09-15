@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import Exceptions.MasterServiceException;
 
 public class MasterServer {
 	
@@ -184,6 +183,7 @@ public class MasterServer {
 		}
 		
 		// do we really need this to listen from slave servers
+		@SuppressWarnings("unused")
 		private class ServingService extends Thread {
 			
 			public void run() {

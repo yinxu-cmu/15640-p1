@@ -56,17 +56,15 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	@Override
 	public int read() throws IOException {
 		int retByte = 0;
-		if (!migrated) {
-			fileStream.seek(counter);
-			retByte = fileStream.read();
-			if (retByte != -1) {
-				counter++;
-			}
-
-		} else {
-			fileStream.close(); /* close the file handler of last node */
+		if (migrated) {
 			fileStream = new RandomAccessFile(fileName, "rws");
 			migrated = false;
+		}
+		
+		fileStream.seek(counter);
+		retByte = fileStream.read();
+		if (retByte != -1) {
+			counter++;
 		}
 
 		return retByte;
@@ -120,6 +118,15 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 //
 //	}
 //
+	public void closeStream() {
+		try {
+			fileStream.close(); /* close the file handler of last node */
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error in closing input file");
+			e.printStackTrace();
+		} 
+	}
 	/**
 	 * @return the migrated
 	 */

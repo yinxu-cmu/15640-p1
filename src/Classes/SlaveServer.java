@@ -17,10 +17,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import Exceptions.SlaveServiceException;
 
 public class SlaveServer {
 	
