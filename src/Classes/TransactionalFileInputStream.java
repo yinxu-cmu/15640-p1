@@ -64,7 +64,7 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 			}
 
 		} else {
-			fileStream.close();
+			fileStream.close(); /* close the file handler of last node */
 			fileStream = new RandomAccessFile(fileName, "rws");
 			migrated = false;
 		}
