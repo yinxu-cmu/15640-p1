@@ -65,11 +65,13 @@ public class FileCompression implements MigratableProcess{
 
 				numbercount = in.read(buf);
 				if (numbercount == -1) {
+					System.out.println("Finished processing");
 					finished = true;
 					break;
 				}
 				
 				out.write(buf, 0, numbercount);
+				out.flush();
 				
 				try {
 					Thread.sleep(600);
@@ -78,12 +80,15 @@ public class FileCompression implements MigratableProcess{
 					e.printStackTrace();
 				}
 			}
+			out.close();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
 		
 		inStream.closeStream();
 		inStream.setMigrated(true);
+		outStream.closeStream();
+		outStream.setMigrated(true);
 		suspending = false;
 	}
 

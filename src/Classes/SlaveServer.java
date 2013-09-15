@@ -117,7 +117,7 @@ public class SlaveServer {
 	 * @param args
 	 */
 	private void startNewProcess(String[] args) {
-		MigratableProcess newProcess;
+		MigratableProcess newProcess = null;
 		try {
 			Class<?> processClass = Class.forName("Classes." + args[2]);
 			Constructor<?> processConstructor = processClass.getConstructor(String[].class);
@@ -144,7 +144,10 @@ public class SlaveServer {
 		} catch (InvocationTargetException e) {
 			System.out.println("Invocation target exception for " + args[2]);
 			return;
+		} catch (Exception e ) {
+			System.err.println(e.toString());
 		}
+		
 		Thread newThread = new Thread(newProcess);
 		newThread.start();
 		
