@@ -64,6 +64,7 @@ public class TestMigratableProcess implements MigratableProcess{
 		}
 		
 		suspending = false;
+		inStream.setMigrated(true);
 		
 	}
 	

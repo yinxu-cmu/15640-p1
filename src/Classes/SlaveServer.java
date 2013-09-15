@@ -102,9 +102,9 @@ public class SlaveServer {
 			else if (str.equals("processlist")) {
 				for (Map.Entry<Integer, ProcessInfo> entry : processMap.entrySet()) {
 					if (entry.getValue().process.getFinished())
-						out.write("#" + entry.getKey() + entry.getValue().getClass().getName() + " " + ProcessStatus.TERMINATED + "\n");
+						out.write("#" + entry.getKey() + "\t" + entry.getValue().getClass().getName() + " " + ProcessStatus.TERMINATED + "\n");
 					else
-						out.write("#" + entry.getKey() + entry.getValue().getClass().getName() + " " + entry.getValue().status + "\n");
+						out.write("#" + entry.getKey() + "\t" + entry.getValue().getClass().getName() + " " + entry.getValue().status + "\n");
 					out.flush();
 				}
 				
