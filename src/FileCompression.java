@@ -70,7 +70,7 @@ public class FileCompression implements MigratableProcess{
 				out.flush();
 				
 				try {
-					Thread.sleep(600);
+					Thread.sleep(9000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

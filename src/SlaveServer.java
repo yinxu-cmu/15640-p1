@@ -151,7 +151,7 @@ public class SlaveServer {
 	private void startNewProcess(String[] args) {
 		MigratableProcess newProcess = null;
 		try {
-			Class<?> processClass = Class.forName("Classes." + args[2]);
+			Class<MigratableProcess> processClass = (Class<MigratableProcess>) Class.forName(args[2]);
 			Constructor<?> processConstructor = processClass
 					.getConstructor(String[].class);
 			Object[] processArgs = { Arrays.copyOfRange(args, 3, args.length) };
@@ -159,6 +159,7 @@ public class SlaveServer {
 					.newInstance(processArgs);
 		} catch (ClassNotFoundException e) {
 			System.out.println("Could not find class " + args[2]);
+			e.printStackTrace();
 			return;
 		} catch (SecurityException e) {
 			System.out.println("Security Exception getting constructor for "

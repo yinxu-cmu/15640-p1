@@ -93,7 +93,7 @@ public class CaesarCipher implements MigratableProcess {
 			}
 
 			try {
-				Thread.sleep(60);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
