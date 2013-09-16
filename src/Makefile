@@ -17,6 +17,8 @@ CLASSES = \
 	SlaveServer.java \
 	ProcessManager.java \
 	TestMigratableProcess.java \
+    CaesarCipher.java \
+    FileCompression.java
 
 default: classes
 
